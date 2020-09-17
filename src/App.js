@@ -1,7 +1,7 @@
-import React, { useReducer } from "react";
+import React, { useReducer, useState } from "react";
 function reducer(state, action) {
-  if (action.type === "increment") {
-    return state + 1;
+  if (action.type === "add-todo") {
+    return { todos: [...state.todos, { text: action.text, completed: false }] };
   } else if (action.type === "decrement") {
     return state - 1;
   } else {
@@ -10,12 +10,20 @@ function reducer(state, action) {
 }
 
 function App() {
-  const [count, dispatch] = useReducer(reducer, 0);
+  const [{ todos }, dispatch] = useReducer(reducer, { todos: [] });
+  const [text, setText] = useState();
   return (
     <div>
-      <div>{count}</div>
-      <button onClick={() => dispatch({ type: "increment" })}>Increment</button>
-      <button onClick={() => dispatch({ type: "decrement" })}>Decrement</button>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          dispatch({ type: "add-todo", text });
+          setText("");
+        }}
+      >
+        <input value={text} onChange={(e) => setText(e.target.value)} />
+      </form>
+      <pre>{JSON.stringify(todos, null, 2)}</pre>
     </div>
   );
 }
